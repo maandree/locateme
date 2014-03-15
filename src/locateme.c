@@ -64,7 +64,7 @@ void guess_by_timezone_offset(void)
   if (longitude < -180.f)
     longitude += 360.f;
   
-  printf("0.0 %f\n", longitude);
+  printf("0.0 %f timezone offset\n", longitude);
   fflush(stdout);
 }
 
