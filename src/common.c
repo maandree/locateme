@@ -20,7 +20,6 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <sys/stat.h>
-#include <alloca.h>
 
 
 /**
@@ -57,7 +56,7 @@ void report(float latitude, float longitude, const char* method, int cacheable)
   
   if (cacheable)
     {
-      char* pathname = alloca(4096 * sizeof(char));
+      char pathname[4096];
       FILE* f;
       
       snprintf(pathname, 4096, "%s/.cache", home());

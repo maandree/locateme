@@ -29,7 +29,7 @@ PKGNAME ?= locateme
 # Optimisation settings for C code compilation
 OPTIMISE ?= -Og -g
 # Warnings settings for C code compilation
-WARN = -Wall -Wextra -pedantic
+WARN = -Wall -Wextra
 # The C standard for C code compilation
 STD = c99
 FLAGS = -std=$(STD) $(WARN) $(OPTIMISE) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
@@ -41,7 +41,7 @@ FLAGS = -std=$(STD) $(WARN) $(OPTIMISE) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
 all: bin/locateme
 
 
-bin/locateme: $(foreach F,locateme common fallback,obj/$(F).o)
+bin/locateme: $(foreach F,locateme common fallback conffile,obj/$(F).o)
 	@mkdir -p bin
 	$(CC) $(FLAGS) -o $@ $^
 
@@ -49,8 +49,9 @@ obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(FLAGS) -c -o $@ $^
 
-obj/locateme.c: $(foreach F,fallback,src/$(F).h)
+obj/locateme.c: $(foreach F,fallback conffile,src/$(F).h)
 obj/fallback.c: $(foreach F,common,src/$(F).h)
+obj/conffile.c: $(foreach F,common,src/$(F).h)
 
 
 # Clean rules

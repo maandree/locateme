@@ -33,9 +33,9 @@
  */
 int guess_by_cache(void)
 {
-  char* pathname = alloca(4096 * sizeof(char));
-  char* method = alloca(128 * sizeof(char));
   char* method_ = alloca(128 * sizeof(char));
+  char method[128];
+  char pathname[4096];
   FILE* f;
   int matched;
   float latitude;
