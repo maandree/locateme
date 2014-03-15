@@ -1,0 +1,18 @@
+locateme is a program that prints you location
+in the form of latitude and longitude and can
+do continuously as your location changes.
+
+locateme is designed to be simple to as an
+libexec for program of for a user to use
+manually or configure another program to use.
+
+To you locateme, you simple run `locateme`
+and your location will be printed as
+`latitude longitude`. If you add the option
+-c (--continuous) latitude longitude will
+print every time it detects that your location
+has changed. Additionally if -q (--quickly)
+is used in addition to -c till first print
+your last location or fallback location and
+then attemp to find out your actual location.
+
