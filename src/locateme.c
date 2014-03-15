@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "coordinator.h"
 #include "conffile.h"
 
 
@@ -82,11 +83,7 @@ int main(int argc, char** argv)
       data[2].argv = NULL;
     }
   for (; data->argc > 0; data++)
-    {
-      printf("%s + %i\n", data->argv[0], data->argc - 1);
-      free(data->argv[0]);
-      free(data->argv);
-    }
+      run(data->argc, data->argv, continuous, quickly);
   free(data_);
   
   return 0;

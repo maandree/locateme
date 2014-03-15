@@ -41,7 +41,7 @@ FLAGS = -std=$(STD) $(WARN) $(OPTIMISE) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
 all: bin/locateme
 
 
-bin/locateme: $(foreach F,locateme common fallback conffile,obj/$(F).o)
+bin/locateme: $(foreach F,locateme common fallback conffile coordinator,obj/$(F).o)
 	@mkdir -p bin
 	$(CC) $(FLAGS) -o $@ $^
 
