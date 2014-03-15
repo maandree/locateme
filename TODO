@@ -5,7 +5,10 @@ Providers to implement:
 	External command
 	GeoClue
 	Guess location by guessing city from to where the symlink /etc/locattime refers
-	Guess location by guessing town from postal code and country, if country is omitted use
-	  country of city guessed from /etc/locattime
+	Guess location by guessing town from postal code and country, if country is omitted
+	  use country of the city guessed from /etc/locattime
 	GNOME clock and similar applets
+
+If two instances of locateme is running one
+which be idle wait for updates from the other.
 
