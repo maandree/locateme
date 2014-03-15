@@ -27,7 +27,7 @@
  * 
  * @param   argc  The number of elements in `argv`
  * @param   argv  Command line arguments
- * @return  Zero on success
+ * @return        Zero on success
  */
 int main(int argc, char** argv)
 {
