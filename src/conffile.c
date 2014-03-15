@@ -75,8 +75,6 @@ FILE* get_conffile(char* conffile_pathname)
   if (f == NULL)
     f = fopen("/etc/locateme.conf", "r");
   
-  printf("%i\n", (f != NULL) && (conffile_pathname != NULL));
-  printf("%s\n", pathname);
   if ((f != NULL) && (conffile_pathname != NULL))
     memcpy(conffile_pathname, pathname, (strlen(pathname) + 1) * sizeof(char));
   return f;
