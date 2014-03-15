@@ -24,8 +24,13 @@
 #include <alloca.h>
 
 
+#define DO_CACHE  1
+#define DO_NOT_CACHE  0
+
+
 int guess_by_timezone_offset(void);
 int guess_by_cache(void);
+void report(float latitude, float longitude, const char* method, int cacheable);
 
 
 int main(int argc, char** argv)
@@ -51,6 +56,7 @@ int guess_by_cache(void)
   char* pathname = alloca(4096 * sizeof(char));
   FILE* f;
   int matched;
+  char* method_ = alloca(128 * sizeof(char));
   char* method = alloca(128 * sizeof(char));
   float latitude;
   float longitude;
@@ -60,15 +66,16 @@ int guess_by_cache(void)
   if (f == NULL)
     return errno;
   
-  matched = fscanf(f, "%f %f %s\n", &latitude, &longitude, method);
+  matched = fscanf(f, "%f %f %s\n", &latitude, &longitude, method_);
   fclose(f);
   if (matched < 2)
     return -1;
   
   if (matched < 3)
-    method = "unknown";
+    method_ = "unknown";
   
-  printf("%f %f %s cache\n", latitude, longitude, method);
+  snprintf(method, 128, "%s cache", method_);
+  report(latitude, longitude, method, DO_NOT_CACHE);
   fflush(stdout);
   
   return 0;
@@ -111,9 +118,26 @@ int guess_by_timezone_offset(void)
   if (longitude < -180.f)
     longitude += 360.f;
   
-  printf("0.0 %f timezone offset\n", longitude);
-  fflush(stdout);
+  report(0.f, longitude, "timezone offset", DO_NOT_CACHE);
   
   return 0;
+}
+
+
+/**
+ * Report a found location, and cache it if preferable
+ * 
+ * @param  latitude   The user's guessed latitude location
+ * @param  longitude  The user's guessed longitude location
+ * @param  method     Location guessing method
+ * @param  cacheable  Whether to cache the found location
+ */
+void report(float latitude, float longitude, const char* method, int cacheable)
+{
+  printf("%f %f %s\n", latitude, longitude, method);
+  fflush(stdout);
+  
+  if (cacheable)
+    ; /* TODO */
 }
 
