@@ -1,0 +1,11 @@
+Providers to implement:
+
+	Manual
+	External file
+	External command
+	GeoClue
+	Guess location by guessing city from to where the symlink /etc/locattime refers
+	Guess location by guessing town from postal code and country, if country is omitted use
+	  country of city guessed from /etc/locattime
+	GNOME clock and similar applets
+
