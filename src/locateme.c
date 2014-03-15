@@ -22,6 +22,8 @@
 #include <pwd.h>
 #include <errno.h>
 #include <alloca.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 
 #define DO_CACHE  1
@@ -30,6 +32,8 @@
 
 int guess_by_timezone_offset(void);
 int guess_by_cache(void);
+
+const char* home(void);
 void report(float latitude, float longitude, const char* method, int cacheable);
 
 
@@ -51,17 +55,15 @@ int main(int argc, char** argv)
  */
 int guess_by_cache(void)
 {
-  struct passwd* pwd = getpwuid(getuid());
-  char* home = pwd->pw_dir;
   char* pathname = alloca(4096 * sizeof(char));
-  FILE* f;
-  int matched;
   char* method_ = alloca(128 * sizeof(char));
   char* method = alloca(128 * sizeof(char));
+  FILE* f;
+  int matched;
   float latitude;
   float longitude;
   
-  snprintf(pathname, 4096, "%s/.cache/locateme", home);
+  snprintf(pathname, 4096, "%s/.cache/locateme", home());
   f = fopen(pathname, "r");
   if (f == NULL)
     return errno;
@@ -125,6 +127,25 @@ int guess_by_timezone_offset(void)
 
 
 /**
+ * Get the user's home directory
+ * 
+ * @return  The user's home directory
+ */
+const char* home(void)
+{
+  static char* home = NULL;
+  
+  if (home == NULL)
+    {
+      struct passwd* pwd = getpwuid(getuid());
+      home = pwd->pw_dir;
+    }
+  
+  return (const char*)home;
+}
+
+
+/**
  * Report a found location, and cache it if preferable
  * 
  * @param  latitude   The user's guessed latitude location
@@ -138,6 +159,21 @@ void report(float latitude, float longitude, const char* method, int cacheable)
   fflush(stdout);
   
   if (cacheable)
-    ; /* TODO */
+    {
+      char* pathname = alloca(4096 * sizeof(char));
+      FILE* f;
+      
+      snprintf(pathname, 4096, "%s/.cache", home());
+      mkdir(pathname, 0777);
+      
+      snprintf(pathname, 4096, "%s/.cache/locateme", home());
+      f = fopen(pathname, "w");
+      if (f != NULL)
+	{
+	  fprintf(f, "%f %f %s\n", latitude, longitude, method);
+	  fflush(f);
+	  fclose(f);
+	}
+    }
 }
 
