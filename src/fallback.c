@@ -117,3 +117,27 @@ int guess_by_timezone_offset(void)
   return 0;
 }
 
+
+/**
+ * Use location been provided manually
+ * 
+ * @param   args  Configurations
+ * @return        Zero on success
+ */
+int guess_by_manual(char** args)
+{
+  int len = strlen(args[0]) + strlen(args[1]);
+  char* text = alloca((len + 2) * sizeof(char));
+  float latitude;
+  float longitude;
+  
+  snprintf(text, len + 2, "%s %s", args[0], args[1]);
+  
+  if (sscanf(text, "%f %f", &latitude, &longitude) < 2)
+    return 1;
+  
+  report(latitude, longitude, "manual", DO_NOT_CACHE, SYNC);
+  
+  return 0;
+}
+

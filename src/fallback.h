@@ -39,6 +39,14 @@ int guess_by_cache(void);
  */
 int guess_by_timezone_offset(void);
 
+/**
+ * Use location been provided manually
+ * 
+ * @param   args  Configurations
+ * @return        Zero on success
+ */
+int guess_by_manual(char** args);
+
 
 #endif
 

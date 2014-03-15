@@ -30,15 +30,22 @@ void init_coordination(int continuous, int quickly);
 
 /**
  * Abort coordination
- * 
- * @return  Whether we have found a location
  */
-int abort_coordination(void);
+void abort_coordination(void);
 
 /**
  * Terminate coordination
+ * 
+ * @return  Whether we have found a location
  */
-void term_coordination(void);
+int term_coordination(void);
+
+/**
+ * Check whether we are already
+ * 
+ * @return  Whether we are already
+ */
+int already_done(void);
 
 
 /**

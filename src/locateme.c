@@ -39,7 +39,6 @@ int main(int argc, char** argv)
   FILE* f;
   conffile_t* data;
   conffile_t* data_;
-  int done;
   
   for (i = 0; i < argc; i++)
     {
@@ -90,10 +89,10 @@ retry:
       run(data->argc, data->argv);
   free(data_);
   
-  done = abort_coordination();
-  term_coordination();
+  if (already_done())
+    abort_coordination();
   
-  if (!done)
+  if (!term_coordination())
     {
       if (quickly && !continuous)
 	return 1;

@@ -70,22 +70,40 @@ void init_coordination(int continuous, int quickly)
 
 /**
  * Abort coordination
- * 
- * @return  Whether we have found a location
  */
-int abort_coordination(void)
+void abort_coordination(void)
 {
-  return got_a_location;
 }
 
 
 /**
  * Terminate coordination
+ * 
+ * @return  Whether we have found a location
  */
-void term_coordination(void)
+int term_coordination(void)
 {
   pthread_mutex_destroy(&coordinator_mutex);
   pthread_cond_destroy(&coordinator_cond);
+  
+  return got_a_location;
+}
+
+
+/**
+ * Check whether we are already
+ * 
+ * @return  Whether we are already
+ */
+int already_done(void)
+{
+  int rc = continuous_mode;
+  pthread_mutex_lock(&coordinator_mutex);
+  
+  rc &= got_a_location;
+  
+  pthread_mutex_unlock(&coordinator_mutex);
+  return rc;
 }
 
 
@@ -107,6 +125,9 @@ void run(int argc, char** argv)
   ___case("timezone-offset")
     guess_by_timezone_offset();
   
+  ___case("manual")
+    guess_by_manual(argv + 1);
+  
   #undef ___case
   #undef __case
   
@@ -126,10 +147,9 @@ int may_i_report(int async)
   int rc = async;
   pthread_mutex_lock(&coordinator_mutex);
   
-  rc |= quickly_mode;
-  quickly_mode = 0;
-  if (rc)
+  if ((rc |= quickly_mode))
     got_a_location = 1;
+  quickly_mode = 0;
   
   pthread_mutex_unlock(&coordinator_mutex);
   return rc;
