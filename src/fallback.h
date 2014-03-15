@@ -22,7 +22,7 @@
 
 /**
  * Uses the cache to determine last location
- * and guess that that one is still accurate.
+ * and guess that that one is still accurate
  * 
  * @return  Zero on success
  */
@@ -33,7 +33,7 @@ int guess_by_cache(void);
  * based on timezone offset, during standard
  * time and assume double summer time is never
  * used and that summer time adjustment is
- * always +1 hour, and default latitude to 0°.
+ * always +1 hour, and default latitude to 0°
  * 
  * @return  Zero on success
  */
