@@ -16,38 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LOCATEME_COMMON_H
-#define LOCATEME_COMMON_H
+#ifndef LOCATEME_FALLBACK_H
+#define LOCATEME_FALLBACK_H
 
 
 /**
- * Please cache the location for me
- */
-#define DO_CACHE  1
-
-/**
- * Whatever you do, do not cache this
- */
-#define DO_NOT_CACHE  0
-
-
-
-/**
- * Get the user's home directory
+ * Uses the cache to determine last location
+ * and guess that that one is still accurate.
  * 
- * @return  The user's home directory
+ * @return  Zero on success
  */
-const char* home(void);
+int guess_by_cache(void);
 
 /**
- * Report a found location, and cache it if preferable
+ * Perform an approximate guess on longitude
+ * based on timezone offset, during standard
+ * time and assume double summer time is never
+ * used and that summer time adjustment is
+ * always +1 hour, and default latitude to 0°.
  * 
- * @param  latitude   The user's guessed latitude location
- * @param  longitude  The user's guessed longitude location
- * @param  method     Location guessing method
- * @param  cacheable  Whether to cache the found location
+ * @return  Zero on success
  */
-void report(float latitude, float longitude, const char* method, int cacheable);
+int guess_by_timezone_offset(void);
 
 
 #endif

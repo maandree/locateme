@@ -41,7 +41,7 @@ FLAGS = -std=$(STD) $(WARN) $(OPTIMISE) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
 all: bin/locateme
 
 
-bin/locateme: $(foreach F,locateme common,obj/$(F).o)
+bin/locateme: $(foreach F,locateme common fallback,obj/$(F).o)
 	@mkdir -p bin
 	$(CC) $(FLAGS) -o $@ $^
 
@@ -49,7 +49,8 @@ obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(FLAGS) -c -o $@ $^
 
-obj/locateme.c: $(foreach F,common,$(F).o src/$(F).h)
+obj/locateme.c: $(foreach F,fallback,src/$(F).h)
+obj/fallback.c: $(foreach F,common,src/$(F).h)
 
 
 # Clean rules

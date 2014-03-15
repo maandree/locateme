@@ -1,4 +1,4 @@
-/** 
+/**
  * locateme – really simple universal continuous location tracking
  * 
  * Copyright © 2014  Mattias Andrée (maandree@member.fsf.org)
