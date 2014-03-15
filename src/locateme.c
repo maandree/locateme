@@ -18,14 +18,59 @@
  */
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
+#include <pwd.h>
+#include <errno.h>
+#include <alloca.h>
 
 
-void guess_by_timezone_offset(void);
+int guess_by_timezone_offset(void);
+int guess_by_cache(void);
 
 
 int main(int argc, char** argv)
 {
-  guess_by_timezone_offset();
+  if (guess_by_cache())
+    if (guess_by_timezone_offset())
+      return 1;
+  
+  return 0;
+}
+
+
+/**
+ * Uses the cache to determine last location
+ * and guess that that one is still accurate.
+ * 
+ * @return  Zero on success
+ */
+int guess_by_cache(void)
+{
+  struct passwd* pwd = getpwuid(getuid());
+  char* home = pwd->pw_dir;
+  char* pathname = alloca(4096 * sizeof(char));
+  FILE* f;
+  int matched;
+  char* method = alloca(128 * sizeof(char));
+  float latitude;
+  float longitude;
+  
+  snprintf(pathname, 4096, "%s/.cache/locateme", home);
+  f = fopen(pathname, "r");
+  if (f == NULL)
+    return errno;
+  
+  matched = fscanf(f, "%f %f %s\n", &latitude, &longitude, method);
+  fclose(f);
+  if (matched < 2)
+    return -1;
+  
+  if (matched < 3)
+    method = "unknown";
+  
+  printf("%f %f %s cache\n", latitude, longitude, method);
+  fflush(stdout);
+  
   return 0;
 }
 
@@ -36,8 +81,10 @@ int main(int argc, char** argv)
  * time and assume double summer time is never
  * used and that summer time adjustment is
  * always +1 hour, and default latitude to 0°.
+ * 
+ * @return  Zero on success
  */
-void guess_by_timezone_offset(void)
+int guess_by_timezone_offset(void)
 {
   time_t time_utc;
   time_t time_local;
@@ -66,5 +113,7 @@ void guess_by_timezone_offset(void)
   
   printf("0.0 %f timezone offset\n", longitude);
   fflush(stdout);
+  
+  return 0;
 }
 

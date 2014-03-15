@@ -31,7 +31,7 @@ OPTIMISE ?= -Og -g
 # Warnings settings for C code compilation
 WARN = -Wall -Wextra -pedantic
 # The C standard for C code compilation
-STD = c90
+STD = c99
 FLAGS = -std=$(STD) $(WARN) $(OPTIMISE) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
 
 
