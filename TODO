@@ -9,5 +9,5 @@ Providers to implement:
 	GNOME clock and similar applets
 
 If two instances of locateme is running one
-which be idle wait for updates from the other.
+should be idle wait for updates from the other.
 
