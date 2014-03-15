@@ -89,8 +89,8 @@ int main(int argc, char** argv)
 int guess_by_cache(void)
 {
   char* pathname = alloca(4096 * sizeof(char));
-  char* method_ = alloca(128 * sizeof(char));
   char* method = alloca(128 * sizeof(char));
+  char* method_ = alloca(128 * sizeof(char));
   FILE* f;
   int matched;
   float latitude;
@@ -101,13 +101,27 @@ int guess_by_cache(void)
   if (f == NULL)
     return errno;
   
-  matched = fscanf(f, "%f %f %s\n", &latitude, &longitude, method_);
-  fclose(f);
+  matched = fscanf(f, "%f %f", &latitude, &longitude);
   if (matched < 2)
-    return -1;
+    {
+      fclose(f);
+      return -1;
+    }
   
-  if (matched < 3)
+  (void) fgetc(f);
+  *method_ = '\0';
+  fgets(method_, 128, f);
+  if (*method_ == '\0')
     method_ = "unknown";
+  else
+    {
+      int n = strlen(method_);
+      if ((n > 0) && (*(method_ + n - 1) == '\n'))
+	*(method_ + n - 1) = '\0';
+      if (*method_ == '\0')
+	method_ = "unknown";
+    }
+  fclose(f);
   
   snprintf(method, 128, "%s cache", method_);
   report(latitude, longitude, method, DO_NOT_CACHE);
