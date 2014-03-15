@@ -69,7 +69,7 @@ int guess_by_cache(void)
   fclose(f);
   
   snprintf(method, 128, "%s cache", method_);
-  report(latitude, longitude, method, DO_NOT_CACHE);
+  report(latitude, longitude, method, DO_NOT_CACHE, SYNC);
   fflush(stdout);
   
   return 0;
@@ -112,7 +112,7 @@ int guess_by_timezone_offset(void)
   if (longitude < -180.f)
     longitude += 360.f;
   
-  report(0.f, longitude, "timezone offset", DO_NOT_CACHE);
+  report(0.f, longitude, "timezone offset", DO_NOT_CACHE, SYNC);
   
   return 0;
 }

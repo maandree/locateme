@@ -39,6 +39,7 @@ int main(int argc, char** argv)
   FILE* f;
   conffile_t* data;
   conffile_t* data_;
+  int done;
   
   for (i = 0; i < argc; i++)
     {
@@ -53,6 +54,9 @@ int main(int argc, char** argv)
       
       #undef __
     }
+  
+retry:
+  init_coordination(continuous, quickly);
   
   f = get_conffile(NULL);
   if (f != NULL)
@@ -83,9 +87,20 @@ int main(int argc, char** argv)
       data[2].argv = NULL;
     }
   for (; data->argc > 0; data++)
-      run(data->argc, data->argv, continuous, quickly);
+      run(data->argc, data->argv);
   free(data_);
   
+  done = abort_coordination();
+  term_coordination();
+  
+  if (!done)
+    {
+      if (quickly && !continuous)
+	return 1;
+      quickly = 1;
+      continuous = 0;
+      goto retry;
+    }
   return 0;
 }
 

@@ -49,9 +49,11 @@ obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(FLAGS) -c -o $@ $^
 
-obj/locateme.c: $(foreach F,conffile,src/$(F).h)
+obj/locateme.c: $(foreach F,conffile coordinator,src/$(F).h)
 obj/fallback.c: $(foreach F,common,src/$(F).h)
 obj/conffile.c: $(foreach F,common,src/$(F).h)
+obj/common.c: $(foreach F,coordinator,src/$(F).h)
+obj/coordinator.c: $(foreach F,fallback,src/$(F).h)
 
 
 # Clean rules

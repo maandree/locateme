@@ -17,19 +17,121 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <stdlib.h>
+#include <pthread.h>
+#include <string.h>
+
+#include "fallback.h"
+
+
+/**
+ * Synchronisation mutex
+ */
+static pthread_mutex_t coordinator_mutex;
+
+/**
+ * Synchronisation condition
+ */
+static pthread_cond_t coordinator_cond;
+
+
+/**
+ * Whether program should run continuously
+ */
+static int continuous_mode;
+
+/**
+ * Whether program should provide a reasonable location as fast a possible
+ */
+static int quickly_mode;
+
+/**
+ * Whether we have found a location
+ */
+static int got_a_location;
+
+
+
+/**
+ * Initialise coordination
+ * 
+ * @param  continuous  Whether program should run continuously
+ * @param  quickly     Whether program should provide a reasonable location as fast a possible
+ */
+void init_coordination(int continuous, int quickly)
+{
+  continuous_mode = continuous;
+  quickly_mode = quickly;
+  got_a_location = 0;
+  
+  pthread_mutex_init(&coordinator_mutex, NULL);
+  pthread_cond_init(&coordinator_cond, NULL);
+}
+
+
+/**
+ * Abort coordination
+ * 
+ * @return  Whether we have found a location
+ */
+int abort_coordination(void)
+{
+  return got_a_location;
+}
+
+
+/**
+ * Terminate coordination
+ */
+void term_coordination(void)
+{
+  pthread_mutex_destroy(&coordinator_mutex);
+  pthread_cond_destroy(&coordinator_cond);
+}
+
 
 
 /**
  * Coordinate for running a method for getting the user's location
  * 
- * @param  argc        The number of arguments
- * @param  argv        The arguments, it and its first element will be free:d
- * @param  continuous  Whether program should run continuously
- * @param  quickly     Whether program should provide a reasonable location as fast a possible
+ * @param  argc  The number of arguments
+ * @param  argv  The arguments, it and its first element will be free:d
  */
-void run(int argc, char** argv, int continuous, int quickly)
+void run(int argc, char** argv)
 {
+  #define __case(CASE)   if (!strcmp(*argv, CASE))
+  #define ___case(CASE)  else __case(CASE)
+  
+  __case("cache")
+    guess_by_cache();
+  
+  ___case("timezone-offset")
+    guess_by_timezone_offset();
+  
+  #undef ___case
+  #undef __case
+  
   free(*argv);
   free(argv);
+}
+
+
+/**
+ * Report that you have a location to report
+ * 
+ * @param   async  Did you retrieve location asynchronously?
+ * @return         Whether you may report your findings
+ */
+int may_i_report(int async)
+{
+  int rc = async;
+  pthread_mutex_lock(&coordinator_mutex);
+  
+  rc |= quickly_mode;
+  quickly_mode = 0;
+  if (rc)
+    got_a_location = 1;
+  
+  pthread_mutex_unlock(&coordinator_mutex);
+  return rc;
 }
 

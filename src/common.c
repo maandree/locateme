@@ -21,6 +21,8 @@
 #include <pwd.h>
 #include <sys/stat.h>
 
+#include "coordinator.h"
+
 
 /**
  * Get the user's home directory
@@ -48,9 +50,13 @@ const char* home(void)
  * @param  longitude  The user's guessed longitude location
  * @param  method     Location guessing method
  * @param  cacheable  Whether to cache the found location
+ * @param  async      Whether the information was fetched asynchronously
  */
-void report(float latitude, float longitude, const char* method, int cacheable)
+void report(float latitude, float longitude, const char* method, int cacheable, int async)
 {
+  if (!may_i_report(async))
+    return;
+  
   printf("%f %f %s\n", latitude, longitude, method);
   fflush(stdout);
   

@@ -31,6 +31,17 @@
 #define DO_NOT_CACHE  0
 
 
+/**
+ * The information was fetched asynchronously
+ */
+#define ASYNC  1
+
+/**
+ * The information was fetched synchronously
+ */
+#define SYNC  0
+
+
 
 /**
  * Get the user's home directory
@@ -46,8 +57,9 @@ const char* home(void);
  * @param  longitude  The user's guessed longitude location
  * @param  method     Location guessing method
  * @param  cacheable  Whether to cache the found location
+ * @param  async      Whether the information was fetched asynchronously
  */
-void report(float latitude, float longitude, const char* method, int cacheable);
+void report(float latitude, float longitude, const char* method, int cacheable, int async);
 
 
 #endif

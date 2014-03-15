@@ -21,14 +21,41 @@
 
 
 /**
- * Coordinate for running a method for getting the user's location
+ * Initialise coordination
  * 
- * @param  argc        The number of arguments
- * @param  argv        The arguments, it and its first element will be free:d
  * @param  continuous  Whether program should run continuously
  * @param  quickly     Whether program should provide a reasonable location as fast a possible
  */
-void run(int argc, char** argv, int continuous, int quickly);
+void init_coordination(int continuous, int quickly);
+
+/**
+ * Abort coordination
+ * 
+ * @return  Whether we have found a location
+ */
+int abort_coordination(void);
+
+/**
+ * Terminate coordination
+ */
+void term_coordination(void);
+
+
+/**
+ * Coordinate for running a method for getting the user's location
+ * 
+ * @param  argc  The number of arguments
+ * @param  argv  The arguments, it and its first element will be free:d
+ */
+void run(int argc, char** argv);
+
+/**
+ * Report that you have a location to report
+ * 
+ * @param   async  Did you retrieve location asynchronously?
+ * @return         Whether you may report your findings
+ */
+int may_i_report(int async);
 
 
 #endif
