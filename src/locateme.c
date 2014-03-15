@@ -19,23 +19,30 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
-#include <unistd.h>
-#include <pwd.h>
 #include <errno.h>
 #include <alloca.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+
+#include "common.h"
 
 
-#define DO_CACHE  1
-#define DO_NOT_CACHE  0
-
-
-int guess_by_timezone_offset(void);
+/**
+ * Uses the cache to determine last location
+ * and guess that that one is still accurate.
+ * 
+ * @return  Zero on success
+ */
 int guess_by_cache(void);
 
-const char* home(void);
-void report(float latitude, float longitude, const char* method, int cacheable);
+/**
+ * Perform an approximate guess on longitude
+ * based on timezone offset, during standard
+ * time and assume double summer time is never
+ * used and that summer time adjustment is
+ * always +1 hour, and default latitude to 0°.
+ * 
+ * @return  Zero on success
+ */
+int guess_by_timezone_offset(void);
 
 
 /**
@@ -149,57 +156,5 @@ int guess_by_timezone_offset(void)
   report(0.f, longitude, "timezone offset", DO_NOT_CACHE);
   
   return 0;
-}
-
-
-/**
- * Get the user's home directory
- * 
- * @return  The user's home directory
- */
-const char* home(void)
-{
-  static char* home = NULL;
-  
-  if (home == NULL)
-    {
-      struct passwd* pwd = getpwuid(getuid());
-      home = pwd->pw_dir;
-    }
-  
-  return (const char*)home;
-}
-
-
-/**
- * Report a found location, and cache it if preferable
- * 
- * @param  latitude   The user's guessed latitude location
- * @param  longitude  The user's guessed longitude location
- * @param  method     Location guessing method
- * @param  cacheable  Whether to cache the found location
- */
-void report(float latitude, float longitude, const char* method, int cacheable)
-{
-  printf("%f %f %s\n", latitude, longitude, method);
-  fflush(stdout);
-  
-  if (cacheable)
-    {
-      char* pathname = alloca(4096 * sizeof(char));
-      FILE* f;
-      
-      snprintf(pathname, 4096, "%s/.cache", home());
-      mkdir(pathname, 0777);
-      
-      snprintf(pathname, 4096, "%s/.cache/locateme", home());
-      f = fopen(pathname, "w");
-      if (f != NULL)
-	{
-	  fprintf(f, "%f %f %s\n", latitude, longitude, method);
-	  fflush(f);
-	  fclose(f);
-	}
-    }
 }
 

@@ -40,13 +40,16 @@ FLAGS = -std=$(STD) $(WARN) $(OPTIMISE) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
 .PHONY: all
 all: bin/locateme
 
-bin/locateme: obj/locateme.o
+
+bin/locateme: $(foreach F,locateme common,obj/$(F).o)
 	@mkdir -p bin
 	$(CC) $(FLAGS) -o $@ $^
 
 obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(FLAGS) -c -o $@ $^
+
+obj/locateme.c: $(foreach F,common,$(F).o src/$(F).h)
 
 
 # Clean rules
