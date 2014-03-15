@@ -17,9 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "common.h"
 #include "fallback.h"
+#include "conffile.h"
 
 
 /**
@@ -52,6 +55,20 @@ int main(int argc, char** argv)
   if (guess_by_cache())
     if (guess_by_timezone_offset())
       return 1;
+  
+  FILE* f = get_conffile(NULL);
+  conffile_t* data = read_conffile(f);
+  conffile_t* data_ = data;
+  fclose(f);
+  
+  for (; data->argc > 0; data++)
+    {
+      printf("%s + %i\n", data->argv[0], data->argc - 1);
+      free(data->argv[0]);
+      free(data->argv);
+    }
+  
+  free(data_);
   
   return 0;
 }

@@ -19,14 +19,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <alloca.h>
 
 #include "common.h"
+
+#include "conffile.h"
 
 
 /**
  * Open the configuration file and store its pathname
  * 
- * @param   conffile_pathname  Storage location for the file's pathname
+ * @param   conffile_pathname  Storage location for the file's pathname, may be `NULL`
  * @return                     A file stream of the file, `NULL` if not found
  */
 FILE* get_conffile(char* conffile_pathname)
@@ -72,8 +75,60 @@ FILE* get_conffile(char* conffile_pathname)
   if (f == NULL)
     f = fopen("/etc/locateme.conf", "r");
   
-  if (f != NULL)
+  printf("%i\n", (f != NULL) && (conffile_pathname != NULL));
+  printf("%s\n", pathname);
+  if ((f != NULL) && (conffile_pathname != NULL))
     memcpy(conffile_pathname, pathname, (strlen(pathname) + 1) * sizeof(char));
   return f;
+}
+
+
+/**
+ * Read the content of the configuration file
+ * 
+ * @param   f  Stream of the configuration file
+ * @return     A list of line content, it and some of its content need to be free:d
+ */
+conffile_t* read_conffile(FILE* f)
+{
+  char* line = alloca(4096 * sizeof(char));
+  conffile_t* cont = malloc(1 * sizeof(conffile_t));
+  int i = 0;
+  
+  while (fgets(line, 4096, f))
+    {
+      int count = 0;
+      int len = strlen(line);
+      if (len > 0)
+	{
+	  char* args_cont = malloc(len * sizeof(char));
+	  char** args = malloc(1 * sizeof(char*));
+	  
+	  *(args + count++) = args_cont;
+	  while (*line != '\n')
+	    if (*line != ' ')
+	      *args_cont++ = *line++;
+	    else
+	      {
+		line++;
+		*args_cont++ = '\0';
+		if ((count & -count) == count)
+		  args = realloc(args, (count << 1) * sizeof(char*));
+		*(args + count++) = args_cont;
+	      }
+	  *args_cont = '\0';
+	  
+	  (cont + i)->argc = count;
+	  (cont + i)->argv = args;
+	  i++;
+	  if ((i & -i) == i)
+	    cont = realloc(cont, (i << 1) * sizeof(conffile_t));
+	}
+    }
+  
+  (cont + i)->argc = -1;
+  (cont + i)->argv = NULL;
+  
+  return cont;
 }
 
