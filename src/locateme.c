@@ -18,6 +18,7 @@
  */
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <errno.h>
@@ -37,8 +38,33 @@ const char* home(void);
 void report(float latitude, float longitude, const char* method, int cacheable);
 
 
+/**
+ * This is the main entry point of the program
+ * 
+ * @param   argc  The number of elements in `argv`
+ * @param   argv  Command line arguments
+ * @return  Zero on success
+ */
 int main(int argc, char** argv)
 {
+  int continuous = 0;
+  int quickly = 0;
+  int i;
+  
+  for (i = 0; i < argc; i++)
+    {
+      char* arg = *(argv + i);
+      
+      #define __(opt)  (!strcmp(arg, opt))
+      
+      if (__("-c") || __("-cq") || __("-qc") || __("--continuous"))
+	continuous = 1;
+      if (__("-q") || __("-cq") || __("-qc") || __("--quickly"))
+	quickly = 1;
+      
+      #undef __
+    }
+  
   if (guess_by_cache())
     if (guess_by_timezone_offset())
       return 1;
