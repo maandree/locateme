@@ -20,9 +20,25 @@
 #include <time.h>
 
 
+void guess_by_timezone_offset(void);
+
+
 int main(int argc, char** argv)
 {
-  /* Guess (poorly) by timezone */
+  guess_by_timezone_offset();
+  return 0;
+}
+
+
+/**
+ * Perform an approximate guess on longitude
+ * based on timezone offset, during standard
+ * time and assume double summer time is never
+ * used and that summer time adjustment is
+ * always +1 hour, and default latitude to 0°.
+ */
+void guess_by_timezone_offset(void)
+{
   time_t time_utc;
   time_t time_local;
   time_t time_diff;
@@ -49,7 +65,6 @@ int main(int argc, char** argv)
     longitude += 360.f;
   
   printf("0.0 %f\n", longitude);
-  
-  return 0;
+  fflush(stdout);
 }
 
