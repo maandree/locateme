@@ -41,7 +41,7 @@ FLAGS = -std=$(STD) $(WARN) $(OPTIMISE) $(CFLAGS) $(LDFLAGS) $(CPPFLAGS)
 all: bin/locateme
 
 
-bin/locateme: $(foreach F,locateme common fallback conffile coordinator,obj/$(F).o)
+bin/locateme: $(foreach F,locateme common fallback conffile coordinator spawn,obj/$(F).o)
 	@mkdir -p bin
 	$(CC) $(FLAGS) -o $@ $^
 
@@ -53,7 +53,8 @@ obj/locateme.c: $(foreach F,conffile coordinator,src/$(F).h)
 obj/fallback.c: $(foreach F,common,src/$(F).h)
 obj/conffile.c: $(foreach F,common,src/$(F).h)
 obj/common.c: $(foreach F,coordinator,src/$(F).h)
-obj/coordinator.c: $(foreach F,fallback,src/$(F).h)
+obj/coordinator.c: $(foreach F,fallback spawn,src/$(F).h)
+obj/spawn.c: $(foreach F,common,src/$(F).h)
 
 
 # Clean rules
