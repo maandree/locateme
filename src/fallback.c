@@ -141,3 +141,51 @@ int guess_by_manual(char** args)
   return 0;
 }
 
+
+/**
+ * Read location from a file
+ * 
+ * @param   argc  The number of words in `args`
+ * @param   args  The file
+ * @return        Zero on success
+ */
+int guess_by_file(int argc, char** args)
+{
+  int len = argc;
+  int off = 0;
+  int i;
+  char* pathname;
+  FILE* f;
+  float latitude;
+  float longitude;
+  
+  for (i = 0; i < argc; i++)
+    len += strlen(*(args + i));
+  
+  pathname = alloca(len * sizeof(char));
+  
+  for (i = 0; i < argc; i++)
+    {
+      snprintf(pathname + off, len, "%s", *(args + i));
+      off += strlen(*(args + i));
+      *(pathname + off++) = ' ';
+    }
+  
+  *(pathname + len - 1) = '\0';
+  
+  f = fopen(pathname, "r");
+  if (f == NULL)
+    return 1;
+  
+  if (fscanf(f, "%f %f", &latitude, &longitude) < 2)
+    {
+      fclose(f);
+      return 1;
+    }
+  
+  report(latitude, longitude, "file", DO_NOT_CACHE, SYNC);
+  
+  fclose(f);
+  return 0;
+}
+

@@ -1,6 +1,5 @@
 Providers to implement:
 
-	External file
 	External command
 	GeoClue
 	Guess location by guessing city from to where the symlink /etc/locattime refers

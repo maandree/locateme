@@ -47,6 +47,15 @@ int guess_by_timezone_offset(void);
  */
 int guess_by_manual(char** args);
 
+/**
+ * Read location from a file
+ * 
+ * @param   argc  The number of words in `args`
+ * @param   args  The file
+ * @return        Zero on success
+ */
+int guess_by_file(int argc, char** args);
+
 
 #endif
 

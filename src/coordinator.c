@@ -128,6 +128,12 @@ void run(int argc, char** argv)
   ___case("manual")
     guess_by_manual(argv + 1);
   
+  ___case("read")
+    guess_by_file(argc - 1, argv + 1);
+  /*
+  ___case("spawn")
+    guess_by_command(argc - 1, argv + 1);
+  */
   #undef ___case
   #undef __case
   
