@@ -16,9 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#define _GNU_SOURCE
 #include <string.h>
 #include <alloca.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 #include "common.h"
 
@@ -36,6 +41,8 @@ int guess_by_command(int argc, char** args)
   int off = 0;
   int i;
   char* command;
+  int read_write[2];
+  pid_t pid;
   
   for (i = 0; i < argc; i++)
     len += strlen(*(args + i));
@@ -50,7 +57,57 @@ int guess_by_command(int argc, char** args)
     }
   
   *(command + len - 1) = '\0';
-
+  
+  if (pipe(read_write))
+    {
+      perror("pipe");
+      return 1;
+    }
+  
+  pid = fork();
+  if (pid == (pid_t)-1)
+    {
+      perror("fork");
+      close(read_write[0]);
+      close(read_write[1]);
+      return 1;
+    }
+  
+  if (pid)
+    {
+      int rc = 1;
+      FILE* ch = NULL;
+      int status;
+      float latitude;
+      float longitude;
+      
+      waitpid(pid, &status, WUNTRACED);
+      if (WIFEXITED(status) && !WEXITSTATUS(status))
+	if ((ch = fdopen(read_write[0], "r")) != NULL)
+	  if ((rc = fscanf(ch, "%f %f", &latitude, &longitude) == 2))
+	    report(latitude, longitude, "command", DO_CACHE, SYNC /* TODO : ASYNC, who should thread this */);
+      
+      /* I do not know if both of the two first are required, but it cannot hurt */
+      if (ch)
+	fclose(ch);
+      close(read_write[0]);
+      close(read_write[1]);
+      
+      return rc;
+    }
+  else
+    {
+      if (read_write[1] != STDOUT_FILENO)
+	{
+	  close(STDOUT_FILENO);
+	  dup2(read_write[1], STDOUT_FILENO);
+	}
+      execlp("sh", "sh", "-c", command, NULL);
+      perror("execlp");
+      abort();
+    }
+  
+  /* This really should not happen */
   return 1;
 }
 
