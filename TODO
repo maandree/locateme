@@ -11,3 +11,5 @@ Providers to implement:
 If two instances of locateme is running one
 should be idle wait for updates from the other.
 
+Add option to obmit the used method.
+
