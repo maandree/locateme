@@ -1,6 +1,7 @@
 Providers to implement:
 
 	GeoClue
+	Guess location by airport
 	Guess location by guessing city from to where the symlink /etc/locattime refers
 	Guess location by guessing town from postal code and country, if country is omitted
 	  use country of the city guessed from /etc/locattime
