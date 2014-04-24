@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "coordinator.h"
+#include "fallback.h"
+#include "spawn.h"
+
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
-
-#include "fallback.h"
-#include "spawn.h"
 
 
 /**

@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "conffile.h"
+#include "common.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <alloca.h>
-
-#include "common.h"
-
-#include "conffile.h"
 
 
 /**
@@ -67,7 +66,7 @@ FILE* get_conffile(char* conffile_pathname)
 	{
 	  int len;
 	  end = strchr(begin, ':') ?: strchr(begin, '\0');
-	  if ((len = end - begin))
+	  if ((len = (int)(end - begin)))
 	    f = openfile("%.*s/locateme.conf", len, begin);
 	}
     }
@@ -91,12 +90,12 @@ conffile_t* read_conffile(FILE* f)
 {
   char* line = alloca(4096 * sizeof(char));
   conffile_t* cont = malloc(1 * sizeof(conffile_t));
-  int i = 0;
+  size_t i = 0;
   
   while (fgets(line, 4096, f))
     {
-      int count = 0;
-      int len = strlen(line);
+      size_t count = 0;
+      size_t len = strlen(line);
       if (len > 0)
 	{
 	  char* args_cont = malloc(len * sizeof(char));
@@ -116,7 +115,7 @@ conffile_t* read_conffile(FILE* f)
 	      }
 	  *args_cont = '\0';
 	  
-	  (cont + i)->argc = count;
+	  (cont + i)->argc = (int)count;
 	  (cont + i)->argv = args;
 	  i++;
 	  if ((i & -i) == i)

@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "fallback.h"
+#include "common.h"
+
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
 #include <errno.h>
 #include <alloca.h>
-
-#include "common.h"
 
 
 /**
@@ -60,7 +61,7 @@ int guess_by_cache(void)
     method_ = "unknown";
   else
     {
-      int n = strlen(method_);
+      size_t n = strlen(method_);
       if ((n > 0) && (*(method_ + n - 1) == '\n'))
 	*(method_ + n - 1) = '\0';
       if (*method_ == '\0')
@@ -126,7 +127,7 @@ int guess_by_timezone_offset(void)
  */
 int guess_by_manual(char** args)
 {
-  int len = strlen(args[0]) + strlen(args[1]);
+  size_t len = strlen(args[0]) + strlen(args[1]);
   char* text = alloca((len + 2) * sizeof(char));
   float latitude;
   float longitude;
@@ -151,20 +152,20 @@ int guess_by_manual(char** args)
  */
 int guess_by_file(int argc, char** args)
 {
-  int len = argc;
-  int off = 0;
-  int i;
+  size_t len = (size_t)argc;
+  size_t off = 0;
+  size_t i;
   char* pathname;
   FILE* f;
   float latitude;
   float longitude;
   
-  for (i = 0; i < argc; i++)
+  for (i = 0; i < (size_t)argc; i++)
     len += strlen(*(args + i));
   
   pathname = alloca(len * sizeof(char));
   
-  for (i = 0; i < argc; i++)
+  for (i = 0; i < (size_t)argc; i++)
     {
       snprintf(pathname + off, len, "%s", *(args + i));
       off += strlen(*(args + i));

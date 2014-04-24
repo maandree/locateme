@@ -16,12 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "common.h"
+#include "coordinator.h"
+
 #include <stdio.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <sys/stat.h>
-
-#include "coordinator.h"
 
 
 /**
@@ -57,7 +58,7 @@ void report(float latitude, float longitude, const char* method, int cacheable, 
   if (!may_i_report(async))
     return;
   
-  printf("%f %f %s\n", latitude, longitude, method);
+  printf("%f %f %s\n", (double)latitude, (double)longitude, method);
   fflush(stdout);
   
   if (cacheable)
@@ -72,7 +73,7 @@ void report(float latitude, float longitude, const char* method, int cacheable, 
       f = fopen(pathname, "w");
       if (f != NULL)
 	{
-	  fprintf(f, "%f %f %s\n", latitude, longitude, method);
+	  fprintf(f, "%f %f %s\n", (double)latitude, (double)longitude, method);
 	  fflush(f);
 	  fclose(f);
 	}

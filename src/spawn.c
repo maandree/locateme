@@ -16,6 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "spawn.h"
+#include "common.h"
+
 #define _GNU_SOURCE
 #include <string.h>
 #include <alloca.h>
@@ -24,8 +27,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
-
-#include "common.h"
 
 
 /**
@@ -37,19 +38,19 @@
  */
 int guess_by_command(int argc, char** args)
 {
-  int len = argc;
-  int off = 0;
-  int i;
+  size_t len = (size_t)argc;
+  size_t off = 0;
+  size_t i;
   char* command;
   int read_write[2];
   pid_t pid;
   
-  for (i = 0; i < argc; i++)
+  for (i = 0; i < (size_t)argc; i++)
     len += strlen(*(args + i));
   
   command = alloca(len * sizeof(char));
   
-  for (i = 0; i < argc; i++)
+  for (i = 0; i < (size_t)argc; i++)
     {
       snprintf(command + off, len, "%s", *(args + i));
       off += strlen(*(args + i));
