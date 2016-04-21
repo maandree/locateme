@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+
+if test -r ~/.config/metar; then
+    d="$(cat ~/.config/metar | head -n 1)"
+elif test -r /etc/metar; then
+    d="$(cat /etc/metar | head -n 1)"
+else
+    exit 1
+fi
+
+d="http://weather.noaa.gov/pub/data/observations/metar/decoded/${d}.TXT"
+python3 - $(curl -s "$d" | head -n 1 | cut -d ')' -f 2 | cut -d ' ' -f 2,3) <<EOF
+import sys
+try:
+    pcoord = lambda ps : sum(float(p) / 60 ** i for i, p in enumerate(ps))
+    lat = sys.argv[1]
+    lon = sys.argv[2]
+    lat = pcoord(lat[:-1].split('-')) * {'N' : +1, 'S' : -1}[lat[-1]]
+    lon = pcoord(lon[:-1].split('-')) * {'E' : +1, 'W' : -1}[lon[-1]]
+    print('%f %f' % (lat, lon))
+except:
+    sys.exit(1)
+EOF

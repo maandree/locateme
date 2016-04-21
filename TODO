@@ -1,12 +1,8 @@
 Providers to implement:
 
 	GeoClue
-	Guess location by airport
-	    wget http://weather.noaa.gov/pub/data/observations/metar/decoded/ESSA.TXT -O - 2>/dev/null |
-                 head -n 1 | cut -d ')' -f 2 | cut -d ' ' -f 2,3 | sed -e 's:-:=:g' |
-		 sed -e 's:\([0-9=]*\)\(S\|W\):-\1:g' | sed -e 's:=:°:g' -e 's: :'\'' :' -e 's:$:'\'':g' |
-		 sed -e 's:\(N\|E\)::g'
-	Guess location by guessing city from to where the symlink /etc/locattime refers
+	use locateme-metar
+	use locateme-tz
 	Guess location by guessing town from postal code and country, if country is omitted
 	  use country of the city guessed from /etc/locattime
 	GNOME clock and similar applets
