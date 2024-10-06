@@ -1,7 +1,7 @@
 /**
  * locateme – really simple universal continuous location tracking
  * 
- * Copyright © 2014  Mattias Andrée (maandree@member.fsf.org)
+ * Copyright © 2014  Mattias Andrée (m@maandree.se)
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
